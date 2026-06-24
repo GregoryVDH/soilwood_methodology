@@ -33,3 +33,5 @@ format:
         theme: cosmo
         css: styles.css
         page-layout: article
+        comments: 
+          hypothesis: true
