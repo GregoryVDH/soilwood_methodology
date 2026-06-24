@@ -58,7 +58,7 @@
     "href": "md/1_LA-ICPMS/1_LA-ICPMS_variability.html#data-correction-methodology",
     "title": "LA-ICPMS inter-series variability",
     "section": "Data correction methodology",
-    "text": "Data correction methodology\nWe need to determine two reference points in the oak reference measurements: a high value and a low value. From these two values we can normalise the data setting the high value to 1 and the low value to 0 for example. The high and low reference points cannot be minimums and maximums because that can be a little too random. Instead we need to define segments of the reference wood core and calculate average values for these segments. One segment could be in the sapwood and one in the heartwood. However, the position and size of the segments will probably require to be adjusted for each chemical element.",
+    "text": "Data correction methodology\nWe need to determine two reference points in the oak reference measurements: a high value and a low value.",
     "crumbs": [
       "1. LA-ICPMS",
       "<span class='chapter-number'>3</span>  <span class='chapter-title'>LA-ICPMS inter-series variability</span>"
