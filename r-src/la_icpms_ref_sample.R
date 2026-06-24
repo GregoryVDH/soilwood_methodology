@@ -51,11 +51,11 @@ sdList = function(inputList, nrow, ncol) {
 #   "darkorange4", "brown"
 # )
 
-fileList = list.files("./data/data_martin/la-icpms/mean_profiles")
+fileList = list.files("./data/data_martin/la-icpms/mean_profiles_noCorr_C13BL")
 dfList = list()
 n = length(fileList)
 for (i in seq_len(n)) {
-    tab = fread(file = paste0("./data/data_martin/la-icpms/mean_profiles/", fileList[i]), sep = ";", header = TRUE)
+    tab = fread(file = paste0("./data/data_martin/la-icpms/mean_profiles_noCorr_C13BL/", fileList[i]), sep = ";", header = TRUE)
     tab = tab[tab$sample_name == "Oak_ref", ]
     if (nrow(tab) > 0) {
         tab$sample_name = i
@@ -141,7 +141,7 @@ cpal = c(
 # %%
 elt_list = c(3,4,7,8,9,11,12,15,16,17,18)
 maxVal = c(4, 2.5, 0.3, NA, 0.5, NA, 3, 0.7, 1.5, 6, NA)
-# pdf(file = "./pdf/baseline_correction_C_norm.pdf", title = "baseline_correction_C_norm")
+pdf(file = "./pdf/no_baseline_correction_C13BL.pdf", title = "baseline_cono_baseline_correction_C13BLrrection_C_norm")
 for (j in seq_len(length(elt_list))) {
     elt = elt_list[j]
     if (is.na(maxVal[j])) {
@@ -164,7 +164,7 @@ for (j in seq_len(length(elt_list))) {
     for (i in seq_len(n)) { lines(df_smooth[[i]]$dist, df_smooth[[i]][[elt]], col = cpal[i], lwd =2) }
     legend("topright", legend = seq_len(n), lty = 1, col = cpal[1:n], lwd = 2)
 }
-# dev.off()
+dev.off()
 
 #  %%
 

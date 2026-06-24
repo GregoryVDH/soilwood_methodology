@@ -1,2 +1,6 @@
-# Index
+---
+title: "Introduction"
+number-offset: [-1]
+---
 
+# Introduction {.unnumbered}

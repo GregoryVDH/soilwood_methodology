@@ -1,14 +1,14 @@
 {
-  "md/1_LA-ICPMS/1_LA-ICPMS_variability.qmd": {
-    "1_LA-ICPMS_variability.html": "b739982a"
-  },
   "index.qmd": {
-    "index.html": "8c8d12bc"
+    "index.html": "1c559b9f"
   },
   "md/1_LA-ICPMS/0_LA-ICPMS.qmd": {
-    "0_LA-ICPMS.html": "8fc7d6b7"
+    "0_LA-ICPMS.html": "6c7e4727"
+  },
+  "md/1_LA-ICPMS/1_LA-ICPMS_variability.qmd": {
+    "1_LA-ICPMS_variability.html": "36f66391"
   },
   "md/2_iTrax/0_iTrax.qmd": {
-    "0_iTrax.html": "c1864a71"
+    "0_iTrax.html": "114db4a7"
   }
 }

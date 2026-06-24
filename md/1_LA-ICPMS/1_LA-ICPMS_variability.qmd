@@ -16,6 +16,7 @@ knitr::opts_chunk$set(
 default_par <- par(no.readonly = TRUE)
 
 library(data.table)
+source("../../r-src/1_LA-ICPMS/fct.R")
 
 # rainbow(8)
 # heat.colors(8)
@@ -28,286 +29,75 @@ library(data.table)
 
 ## Quantifying the amount if variation between sample series
 
-In this section, I investigate the amount of variation that may occur between sample series runs due to variations in ICPMS instrument sensitivity and detector response from one day to the next.
+The 100 wood core samples of the SoilWood project were not analysed in one single analysis run. The 100 samples were analysed in 12 different series. These different series were analysed at different dates with between series the ICPMS being shut down. This means that the instrument conditions at each series of samples were not the same and these different conditions can lead to variations in ICPMS elemental signals. In this section, I investigate the amount of variation that may occur between sample series runs due to variations in ICPMS instrument sensitivity and detector response from one day to the next. To assess and quantify this inter-series variation, a reference Oak wood core was analysed in each of the 12 sample series. 
 
-In the SoilWood project samples, I analysed a reference Oak wood core in each of the 12 sample runs to assess the inter-series variability. @fig-inter-series-variations-oak-ref shows the K/C concentration profile measured for the reference oak sample for each run. This shows non negligible variation between runs and more importantly there appears to be offsets: _e.g._ the dark blue and orange profiles seemed to be offset by *circa* 0.05 y units.
-
-``` {r}
-#| echo: false
-#| label: fig-inter-series-variations-oak-ref
-#| fig-cap: "Measured K/C signal for the oak reference wood core over the 12 sample series"
-
-
-rm(list = ls(all = TRUE))
-
-meanList = function(inputList, nrow, ncol) {
-    m = 0
-    count = 0
-    for (i in seq_len(length(inputList))) {
-        if (!is.na(inputList[[i]][[ncol]][nrow])) {
-            m = m + inputList[[i]][[ncol]][nrow]
-            count = count + 1
-        }
-    }
-    if (count == 0) {m = NA}
-    return(m / count)
-}
-
-sdList = function(inputList, nrow, ncol) {
-    m = meanList(inputList, nrow, ncol)
-    if (!is.na(m)) {
-        sd = 0
-        count = 0
-        for (i in seq_len(length(inputList))) {
-            if (!is.na(inputList[[i]][[ncol]][nrow])) {
-                sd = sd + (m - inputList[[i]][[ncol]][nrow])**2
-                count = count + 1
-            }
-        }
-        if (count == 0) {sd = NA}
-        sd = (sd / count)**0.5
-    } else {
-        sd = NA
-    }
-    return(sd)
-}
-
-fileList = list.files("../../data/data_martin/la-icpms/mean_profiles")
-dfList = list()
-n = length(fileList)
-for (i in seq_len(n)) {
-    tab = fread(file = paste0("../../data/data_martin/la-icpms/mean_profiles/", fileList[i]), sep = ";", header = TRUE)
-    tab = tab[tab$sample_name == "Oak_ref", ]
-    if (nrow(tab) > 0) {
-        tab$sample_name = i
-        dfList[[i]] = tab
-    }
-}
-
-dfList_lod = list()
-n = length(fileList)
-for (i in seq_len(n)) {
-    tab = fread(file = paste0("../../data/data_martin/la-icpms/mean_profiles_lod/", fileList[i]), sep = ";", header = TRUE)
-    tab = tab[tab$sample_name == "Oak_ref", ]
-    if (nrow(tab) > 0) {
-        tab$sample_name = i
-        dfList_lod[[i]] = tab
-    }
-}
-
-for (i in seq_len(n)) {
-    for (elt in 3:19){
-        exclude = dfList[[i]][[elt]] < dfList_lod[[i]][[elt]]
-        dfList[[i]][[elt]][exclude] = NA
-    }
-}
-
-df_smooth = list()
-for (i in seq_len(n)) {
-    df_smooth[[i]] = as.data.table(dfList[[i]][1:40,])
-    df_smooth[[i]]$dist = seq(1, 40, 1)
-}
-
-for (i in seq_len(n)) {
-    for (r in 1:nrow(df_smooth[[i]])) {
-        for (elt in 3:19) {
-            df_smooth[[i]][[elt]][r] = mean(dfList[[i]][[elt]][ abs(dfList[[i]]$dist - df_smooth[[i]]$dist[r]) <= 1 ], na.rm = TRUE)
-        }
-    }
-}
-
-cpal = c(
-  "dodgerblue2", 
-  "#E31A1C", # red
-  "green4",
-  "#6A3D9A", # purple
-  "#FF7F00", # orange
-  "black", 
-  "gold1",
-  "skyblue2", 
-  "brown",
-  "#FB9A99", # lt pink
-  "darkturquoise", 
-  "palegreen2",
-  "maroon", 
-  "orchid1", 
-  "#CAB2D6", # lt purple
-  "#FDBF6F", # lt orange
-  "gray70", 
-  "khaki2",
-  "deeppink1", 
-  "blue1", 
-  "steelblue4",
-  "green1", 
-  "yellow4", 
-  "yellow3",
-  "darkorange4"
-)
-elt = 8
-plot(c(0,40), c(0,0.4), xlab = "distance to bark (mm)", ylab = "1/C * ICPMS signal", col = "white")
-usr <- par("usr")
-rect(
-  usr[1], usr[3],
-  usr[2], usr[4],
-  col = "grey90",
-  border = NA
-)
-for (i in seq_len(n)) { lines(df_smooth[[i]]$dist, df_smooth[[i]][[elt]], col = cpal[i]) }
-legend("topright", legend = seq_len(n), lty = 1, col = cpal[1:n], lwd = 2)
-
-```
-
-@fig-inter-series-variations-raw-signal shows the inter-series variability for the raw signal (*i.e.* signal corrected for the baseline but not standardised by the C signal). This graph clearly shows an even more pronounced variability of the K signal from one series to the next. This is not surprising because ICPMS sensitivity can change from one day to the next depending on instrument optimisation. The signal level also increases and decreases following the order of the series:
-
-* series 1, 2 and 3 are fairly similar
-* series 4 is higher
-* series 5 and 6 are higher still
-* the signal decreases gradually from series 7 to 12
+The initial intuition to process the LA-ICPMS data in order to minimise variations between sample series was to first correct all elemental signals for the baseline signal (*i.e.* the ICPMS signal measured between ablation events when only He gas is sent to the plasma). Second, all baseline corrected signal are standardised by the C-13 signal to obtain elemental ratios such as K/C for example. Standardising the elemental signals with the C-13 ratio drastically decreases the inter-series variability as shown by comparing @fig-inter-series-variations-raw-signal and @fig-inter-series-variations-oak-ref. 
 
 ``` {r}
 #| echo: false
 #| label: fig-inter-series-variations-raw-signal
 #| fig-cap: "Inter-series variations of the K ICPMS signal corrected for the baseline but not standardised with the C signal"
+#| fig-align: center
 
-
-fileList = list.files("../../data/data_martin/la-icpms/mean_profiles_raw/")
-dfList = list()
-n = length(fileList)
-for (i in seq_len(n)) {
-    tab = fread(file = paste0("../../data/data_martin/la-icpms/mean_profiles_raw/", fileList[i]), sep = ";", header = TRUE)
-    tab = tab[tab$sample_name == "Oak_ref", ]
-    if (nrow(tab) > 0) {
-        tab$sample_name = i
-        dfList[[i]] = tab
-    }
-}
-
-dfList_lod = list()
-n = length(fileList)
-for (i in seq_len(n)) {
-    tab = fread(file = paste0("../../data/data_martin/la-icpms/mean_profiles_raw_lod/", fileList[i]), sep = ";", header = TRUE)
-    tab = tab[tab$sample_name == "Oak_ref", ]
-    if (nrow(tab) > 0) {90
-        tab$sample_name = i
-        dfList_lod[[i]] = tab
-    }
-}
-
-for (i in seq_len(n)) {
-    for (elt in 3:19){
-        exclude = dfList[[i]][[elt]] < dfList_lod[[i]][[elt]]
-        dfList[[i]][[elt]][exclude] = NA
-    }
-}
-
-df_smooth = list()
-for (i in seq_len(n)) {
-    df_smooth[[i]] = as.data.table(dfList[[i]][1:40,])
-    df_smooth[[i]]$dist = seq(1, 40, 1)
-}
-
-for (i in seq_len(n)) {
-    for (r in 1:nrow(df_smooth[[i]])) {
-        for (elt in 3:19) {
-            df_smooth[[i]][[elt]][r] = mean(dfList[[i]][[elt]][ abs(dfList[[i]]$dist - df_smooth[[i]]$dist[r]) <= 1 ], na.rm = TRUE)
-        }
-    }
-}
-
-elt = 8
-plot(c(0,40), c(0,1e5), xlab = "distance to bark (mm)", ylab = "1/C * ICPMS signal", col = "white")
-usr <- par("usr")
-rect(
-  usr[1], usr[3],
-  usr[2], usr[4],
-  col = "grey90",
-  border = NA
-)
-for (i in seq_len(n)) { lines(df_smooth[[i]]$dist, df_smooth[[i]][[elt]], col = cpal[i]) }
-legend("topright", legend = seq_len(n), lty = 1, col = cpal[1:n], lwd = 2)
-
-
+source("../../r-src/1_LA-ICPMS/fig-inter-series-variations-raw-signal-K.R")
 ```
-
-I ran a check comparing the K/C signal for samples in series 1 and 5 (samples other than the Oak reference sample) and the average offset was also observable (@fig-comp-series-1-5).
 
 ``` {r}
 #| echo: false
-#| label: fig-comp-series-1-5
-#| fig-cap: "Average K/C signal in series 1 and 5 (average of all 10 samples)"
+#| label: fig-inter-series-variations-oak-ref
+#| fig-cap: "Measured K/C signal for the oak reference wood core over the 12 sample series"
+#| fig-align: center
 
-tab1 = fread(file = paste0("../../data/data_martin/la-icpms/mean_profiles/", fileList[1]), sep = ";", header = TRUE)
-tab2 = fread(file = paste0("../../data/data_martin/la-icpms/mean_profiles/", fileList[5]), sep = ";", header = TRUE)
-
-sn1 = unique(tab1$sample_name)
-sn2 = unique(tab2$sample_name)
-
-n = 10
-df_smooth1 = list()
-df_smooth2 = list()
-for (i in seq_len(n)) {
-    df_smooth1[[i]] = tab1[1:60]
-    df_smooth1[[i]]$dist = seq(1, 60, 1)
-    df_smooth2[[i]] = tab2[1:60]
-    df_smooth2[[i]]$dist = seq(1, 60, 1)
-}
-
-for (i in seq_len(n)) {
-    for (r in 1:nrow(df_smooth1[[i]])) {
-        for (elt in 3:19) {
-            temp = tab1[tab1$sample_name == sn1[i]]
-            df_smooth1[[i]][[elt]][r] = mean(
-                temp[[elt]][ abs(temp$dist - df_smooth1[[i]]$dist[r]) <= 1 ],
-                na.rm = TRUE
-            )
-            temp = tab2[tab2$sample_name == sn2[i]]
-            df_smooth2[[i]][[elt]][r] = mean(
-                temp[[elt]][ abs(temp$dist - df_smooth2[[i]]$dist[r]) <= 1 ],
-                na.rm = TRUE
-            )
-        }
-    }
-}
-
-K1 = array(data = 0, dim = 60)
-K2 = array(data = 0, dim = 60)
-for (r in 1:60) {
-    for (i in 1:n) {
-        K1[r] = K1[r] + df_smooth1[[i]]$mean.K39[r]
-        K2[r] = K2[r] + df_smooth2[[i]]$mean.K39[r]
-    }
-    K1[r] = K1[r] / n
-    K2[r] = K2[r] / n
-}
-
-plot(1:60, K1, type = 'l', ylim = c(0, 0.3), xlab = "distance to bark (mm)", ylab = "1/C * ICPMS signal")
-lines(1:60, K2, col = "red")
-legend("topright", legend = c("series 1", "series 5"), lty = 1, lwd = 2, col = c("black", "red"))
-
-K1 = array(data = 0, dim = 60)
-K2 = array(data = 0, dim = 60)
-for (r in 1:60) {
-    for (i in 1:n) {
-        K1[r] = K1[r] + df_smooth1[[i]]$mean.Mn55[r]
-        K2[r] = K2[r] + df_smooth2[[i]]$mean.Mn55[r]
-    }
-    K1[r] = K1[r] / n
-    K2[r] = K2[r] / n
-}
+source("../../r-src/1_LA-ICPMS/fig-inter-series-variations-oak-ref-K.R")
+```
 
 
-plot(1:60, K1, type = 'l', ylim = c(0, 1.5), xlab = "distance to bark (mm)", ylab = "1/C * ICPMS signal")
-lines(1:60, K2, col = "red")
-legend("topright", legend = c("series 1", "series 5"), lty = 1, lwd = 2, col = c("black", "red"))
+@fig-inter-series-variations-raw-signal shows the inter-series variability for the raw signal (*i.e.* signal corrected for the baseline but not standardised by the C signal). **This graph clearly shows a pronounced variability of the K signal from one series to the next**. This is not surprising because ICPMS sensitivity can change from one day to the next depending on instrument optimisation. The signal level also increases and decreases following the order of the series:
 
+**Standardising the signal with the C-13 signal (@fig-inter-series-variations-oak-ref) lower inter-series variability but the variability remains non negligible**. I ran a check comparing the K/C signal for samples in series 1 and 5 (samples other than the Oak reference sample) and the offset between these two series was also observable (data not shown) which strongly suggests that it is due to inter-series variability and not simply random error when measuring the oak reference wood core.
+
+After this, I tried looking at elemental signals standardized to the C-13 signal but without subtracting the baseline. This data processing decreased significantly the inter-series variability for certain elements like Mg or K as shown in @fig-inter-series-var-noBLcorr. The inter-series variability is very low in the heartwood for all series except Series 5. Given the variability observed for the non-C13-standardised data (@fig-inter-series-variations-raw-signal), it is likely that the slope of the detector's response to increasing K concentrations changes from one series to the other. 
+
+``` {r}
+#| echo: false
+#| label: fig-inter-series-var-noBLcorr
+#| fig-cap: "Measured K/C signal (no baseline correction for K or C) for the oak reference wood core over the 12 sample series"
+#| fig-align: center
+
+source("../../r-src/1_LA-ICPMS/fig-inter-series-var-noBLcorr-K.R")
 
 ```
+
+I also looked at the variability for elemental signals with no baseline correction standardised with a baseline-corrected C13 signal. The results were somewhat similar to @fig-inter-series-var-noBLcorr but the amount of variance was sligntly higher.
+
+However, for other elements such as **[[phosphorus]{.underline}]{style="color:red;"}**, variability between series was lowest when considering the baseline-corrected data as shown in @fig-inter-series-var-P.
+
+``` {r}
+#| echo: false
+#| label: fig-inter-series-var-P
+#| fig-cap: "Inter-series variations of the phosphorus signal for the oak reference wood core over the 12 sample series"
+#| fig-height: 4
+#| fig-subcap: 
+#|  - "Baseline-corrected data"
+#|  - "No baseline correction"
+#| layout-ncol: 1
+#| fig-align: center
+
+source("../../r-src/1_LA-ICPMS/fig-inter-series-var-P.R")
+
+```
+
+Even when using the baseline-corrected data (like in the case of phosphorus), a certain amount of variability between series is observed for the higher values which (just like K) is probably explained by different slope values for the ICPMS detector's response to increasing P concentrations.
+
+The different behaviors reported here are likely explained by the signal to baseline ratio. 
 
 ::: {.callout-important}
 
 # Conclusion
 
-Inter-series variability does not seem to be simply ramdom errors but due to instrumental drift over the different analysis days. A correction needs to be established to remove this error.
+1. Inter-series variability does not seem to be simply ramdom errors but due to instrumental drift over the different analysis days. 
+2. The LA-ICPMS processing method (baseline correction or not) needs to be adapted to each individual element
+3. A correction equation needs to be established to further reduce inter-series variance.
 
 :::
 

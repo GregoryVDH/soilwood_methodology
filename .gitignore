@@ -1,2 +1,4 @@
 pdf/
 data/
+/.quarto/
+**/*.quarto_ipynb
