@@ -2,87 +2,87 @@
   {
     "objectID": "index.html",
     "href": "index.html",
-    "title": "No title",
+    "title": "SoilWood methodology paper",
     "section": "",
-    "text": "1 Index",
+    "text": "Introduction",
     "crumbs": [
-      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Index</span>"
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Introduction</span>"
     ]
   },
   {
     "objectID": "md/1_LA-ICPMS/0_LA-ICPMS.html",
     "href": "md/1_LA-ICPMS/0_LA-ICPMS.html",
-    "title": "2  Overview",
+    "title": "Overview",
     "section": "",
-    "text": "2.1 Task list",
+    "text": "Task list",
     "crumbs": [
-      "LA-ICPMS",
+      "1. LA-ICPMS",
       "<span class='chapter-number'>2</span>  <span class='chapter-title'>Overview</span>"
     ]
   },
   {
     "objectID": "md/1_LA-ICPMS/0_LA-ICPMS.html#task-list",
     "href": "md/1_LA-ICPMS/0_LA-ICPMS.html#task-list",
-    "title": "2  Overview",
+    "title": "Overview",
     "section": "",
     "text": "Detection limits\nInter-series variability\n\nQuantify the variability\n\nfrom variations in the signal measured or the oak reference sample\nLA-ICPMS vs. HNO3 ICPOES (Caroline data) calibration equations.\n\ntest different methods of correction to minimise bias between sample series\n\nEstablish a protocol to measure the actual resolution of LA-ICPMS: place markers on wood samples of know position and size",
     "crumbs": [
-      "LA-ICPMS",
+      "1. LA-ICPMS",
       "<span class='chapter-number'>2</span>  <span class='chapter-title'>Overview</span>"
     ]
   },
   {
     "objectID": "md/1_LA-ICPMS/1_LA-ICPMS_variability.html",
     "href": "md/1_LA-ICPMS/1_LA-ICPMS_variability.html",
-    "title": "3  LA-ICPMS inter-series variability",
+    "title": "LA-ICPMS inter-series variability",
     "section": "",
-    "text": "3.1 Quantifying the amount if variation between sample series\nIn this section, I investigate the amount of variation that may occur between sample series runs due to variations in ICPMS instrument sensitivity and detector response from one day to the next.\nIn the SoilWood project samples, I analysed a reference Oak wood core in each of the 12 sample runs to assess the inter-series variability. Figure 3.1 shows the K/C concentration profile measured for the reference oak sample for each run. This shows non negligible variation between runs and more importantly there appears to be offsets: e.g. the dark blue and orange profiles seemed to be offset by circa 0.05 y units.\nFigure 3.1: Measured K/C signal for the oak reference wood core over the 12 sample series\nFigure 3.2 shows the inter-series variability for the raw signal (i.e. signal corrected for the baseline but not standardised by the C signal). This graph clearly shows an even more pronounced variability of the K signal from one series to the next. This is not surprising because ICPMS sensitivity can change from one day to the next depending on instrument optimisation. The signal level also increases and decreases following the order of the series:\nFigure 3.2: Inter-series variations of the K ICPMS signal corrected for the baseline but not standardised with the C signal\nI ran a check comparing the K/C signal for samples in series 1 and 5 (samples other than the Oak reference sample) and the average offset was also observable (?fig-comp-series-1-5).\nFigure 3.3: Average K/C signal in series 1 and 5 (average of all 10 samples)\n\n\n\n\n\n\n\n\n\n\n\nFigure 3.4: Average K/C signal in series 1 and 5 (average of all 10 samples)",
+    "text": "Quantifying the amount if variation between sample series\nThe 100 wood core samples of the SoilWood project were not analysed in one single analysis run. The 100 samples were analysed in 12 different series. These different series were analysed at different dates with between series the ICPMS being shut down. This means that the instrument conditions at each series of samples were not the same and these different conditions can lead to variations in ICPMS elemental signals. In this section, I investigate the amount of variation that may occur between sample series runs due to variations in ICPMS instrument sensitivity and detector response from one day to the next. To assess and quantify this inter-series variation, a reference Oak wood core was analysed in each of the 12 sample series.\nThe initial intuition to process the LA-ICPMS data in order to minimise variations between sample series was to first correct all elemental signals for the baseline signal (i.e. the ICPMS signal measured between ablation events when only He gas is sent to the plasma). Second, all baseline corrected signal are standardised by the C-13 signal to obtain elemental ratios such as K/C for example. Standardising the elemental signals with the C-13 ratio drastically decreases the inter-series variability as shown by comparing Figure 3.1 and Figure 3.2.\nFigure 3.1: Inter-series variations of the K ICPMS signal corrected for the baseline but not standardised with the C signal\nFigure 3.2: Measured K/C signal for the oak reference wood core over the 12 sample series\nFigure 3.1 shows the inter-series variability for the raw signal (i.e. signal corrected for the baseline but not standardised by the C signal). This graph clearly shows a pronounced variability of the K signal from one series to the next. This is not surprising because ICPMS sensitivity can change from one day to the next depending on instrument optimisation. The signal level also increases and decreases following the order of the series:\nStandardising the signal with the C-13 signal (Figure 3.2) lower inter-series variability but the variability remains non negligible. I ran a check comparing the K/C signal for samples in series 1 and 5 (samples other than the Oak reference sample) and the offset between these two series was also observable (data not shown) which strongly suggests that it is due to inter-series variability and not simply random error when measuring the oak reference wood core.\nAfter this, I tried looking at elemental signals standardized to the C-13 signal but without subtracting the baseline. This data processing decreased significantly the inter-series variability for certain elements like Mg or K as shown in Figure 3.3. The inter-series variability is very low in the heartwood for all series except Series 5. Given the variability observed for the non-C13-standardised data (Figure 3.1), it is likely that the slope of the detector’s response to increasing K concentrations changes from one series to the other.\nFigure 3.3: Measured K/C signal (no baseline correction for K or C) for the oak reference wood core over the 12 sample series\nI also looked at the variability for elemental signals with no baseline correction standardised with a baseline-corrected C13 signal. The results were somewhat similar to Figure 3.3 but the amount of variance was sligntly higher.\nHowever, for other elements such as phosphorus, variability between series was lowest when considering the baseline-corrected data as shown in Figure 3.4.\nEven when using the baseline-corrected data (like in the case of phosphorus), a certain amount of variability between series is observed for the higher values which (just like K) is probably explained by different slope values for the ICPMS detector’s response to increasing P concentrations.\nThe different behaviors reported here are likely explained by the signal to baseline ratio.",
     "crumbs": [
-      "LA-ICPMS",
+      "1. LA-ICPMS",
       "<span class='chapter-number'>3</span>  <span class='chapter-title'>LA-ICPMS inter-series variability</span>"
     ]
   },
   {
     "objectID": "md/1_LA-ICPMS/1_LA-ICPMS_variability.html#quantifying-the-amount-if-variation-between-sample-series",
     "href": "md/1_LA-ICPMS/1_LA-ICPMS_variability.html#quantifying-the-amount-if-variation-between-sample-series",
-    "title": "3  LA-ICPMS inter-series variability",
+    "title": "LA-ICPMS inter-series variability",
     "section": "",
-    "text": "series 1, 2 and 3 are fairly similar\nseries 4 is higher\nseries 5 and 6 are higher still\nthe signal decreases gradually from series 7 to 12\n\n\n\n\n\n\n\n\n\n\nImportantConclusion\n\n\n\nInter-series variability does not seem to be simply ramdom errors but due to instrumental drift over the different analysis days. A correction needs to be established to remove this error.",
+    "text": "(a) Baseline-corrected data\n\n\n\n\n\n\n\n\n\n\n\n\n\n(b) No baseline correction\n\n\n\n\n\n\n\nFigure 3.4: Inter-series variations of the phosphorus signal for the oak reference wood core over the 12 sample series\n\n\n\n\n\n\n\n\n\n\n\nImportantConclusion\n\n\n\n\nInter-series variability does not seem to be simply ramdom errors but due to instrumental drift over the different analysis days.\nThe LA-ICPMS processing method (baseline correction or not) needs to be adapted to each individual element\nA correction equation needs to be established to further reduce inter-series variance.",
     "crumbs": [
-      "LA-ICPMS",
+      "1. LA-ICPMS",
       "<span class='chapter-number'>3</span>  <span class='chapter-title'>LA-ICPMS inter-series variability</span>"
     ]
   },
   {
     "objectID": "md/1_LA-ICPMS/1_LA-ICPMS_variability.html#data-correction-methodology",
     "href": "md/1_LA-ICPMS/1_LA-ICPMS_variability.html#data-correction-methodology",
-    "title": "3  LA-ICPMS inter-series variability",
-    "section": "3.2 Data correction methodology",
-    "text": "3.2 Data correction methodology\nWe need to determine two reference points in the oak reference measurements: a high value and a low value. From these two values we can normalise the data setting the high value to 1 and the low value to 0 for example. The high and low reference points cannot be minimums and maximums because that can be a little too random. Instead we need to define segments of the reference wood core and calculate average values for these segments. One segment could be in the sapwood and one in the heartwood. However, the position and size of the segments will probably require to be adjusted for each chemical element.",
+    "title": "LA-ICPMS inter-series variability",
+    "section": "Data correction methodology",
+    "text": "Data correction methodology\nWe need to determine two reference points in the oak reference measurements: a high value and a low value. From these two values we can normalise the data setting the high value to 1 and the low value to 0 for example. The high and low reference points cannot be minimums and maximums because that can be a little too random. Instead we need to define segments of the reference wood core and calculate average values for these segments. One segment could be in the sapwood and one in the heartwood. However, the position and size of the segments will probably require to be adjusted for each chemical element.",
     "crumbs": [
-      "LA-ICPMS",
+      "1. LA-ICPMS",
       "<span class='chapter-number'>3</span>  <span class='chapter-title'>LA-ICPMS inter-series variability</span>"
     ]
   },
   {
     "objectID": "md/2_iTrax/0_iTrax.html",
     "href": "md/2_iTrax/0_iTrax.html",
-    "title": "4  Overview",
+    "title": "Overview",
     "section": "",
-    "text": "4.1 Task list",
+    "text": "Task list",
     "crumbs": [
-      "iTrax",
+      "2. iTrax",
       "<span class='chapter-number'>4</span>  <span class='chapter-title'>Overview</span>"
     ]
   },
   {
     "objectID": "md/2_iTrax/0_iTrax.html#task-list",
     "href": "md/2_iTrax/0_iTrax.html#task-list",
-    "title": "4  Overview",
+    "title": "Overview",
     "section": "",
     "text": "Detection limits\nInter-series variability\n\nquantify variability\ncorrection equations ?\n\nSample beginning position: where do you place x-axis origin?\n\nCompile the Cu wire distance measurement data into the database\nestablish the sample origin point from Cu wire distance: Cu signal, Cd signal, Pb signal, Density signal\nestablish the sample origin from correlating iTrax data to LA-ICPMS\nEstablish a method to determine the sample origin from density data alone\n\niTrax resolution\n\nCopper wire tests to assess the integrated volume of sample along the X-axis\nTests to assess the integrated sample volume depth\nTests to assess the integrated volume of sample along the y-axis ?",
     "crumbs": [
-      "iTrax",
+      "2. iTrax",
       "<span class='chapter-number'>4</span>  <span class='chapter-title'>Overview</span>"
     ]
   }
