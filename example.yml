@@ -1,0 +1,18 @@
+book:
+  title: "My Deeply Nested Book"
+  sidebar:
+    chapters:
+      - index.qmd
+      
+      # LEVEL 1: A major Book Part
+      - part: "Part I: Grand Overviews"
+        chapters:
+        
+          # LEVEL 2: A Chapter within that Part
+          - chapter1.qmd
+          
+          # LEVEL 3: Sub-chapters (Nesting stops here)
+          - section: "1.1 Sub-topic Alpha"
+            contents:
+              - subchapters/ch1-1-alpha.qmd
+              - subchapters/ch1-1-beta.qmd

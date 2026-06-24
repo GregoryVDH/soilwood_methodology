@@ -1,0 +1,317 @@
+# LA-ICPMS inter-series variability
+
+```{r}
+#| label: setup
+#| echo: false
+
+library(knitr)
+
+knitr::opts_chunk$set(
+    cache = TRUE, 
+    echo = FALSE,
+    fig.width = 8,
+    fig.height = 6
+)
+
+default_par <- par(no.readonly = TRUE)
+
+library(data.table)
+
+# rainbow(8)
+# heat.colors(8)
+# terrain.colors(8)
+# topo.colors(8)
+# cm.colors(8)
+# gray.colors(8)
+
+```
+
+## Quantifying the amount if variation between sample series
+
+In this section, I investigate the amount of variation that may occur between sample series runs due to variations in ICPMS instrument sensitivity and detector response from one day to the next.
+
+In the SoilWood project samples, I analysed a reference Oak wood core in each of the 12 sample runs to assess the inter-series variability. @fig-inter-series-variations-oak-ref shows the K/C concentration profile measured for the reference oak sample for each run. This shows non negligible variation between runs and more importantly there appears to be offsets: _e.g._ the dark blue and orange profiles seemed to be offset by *circa* 0.05 y units.
+
+``` {r}
+#| echo: false
+#| label: fig-inter-series-variations-oak-ref
+#| fig-cap: "Measured K/C signal for the oak reference wood core over the 12 sample series"
+
+
+rm(list = ls(all = TRUE))
+
+meanList = function(inputList, nrow, ncol) {
+    m = 0
+    count = 0
+    for (i in seq_len(length(inputList))) {
+        if (!is.na(inputList[[i]][[ncol]][nrow])) {
+            m = m + inputList[[i]][[ncol]][nrow]
+            count = count + 1
+        }
+    }
+    if (count == 0) {m = NA}
+    return(m / count)
+}
+
+sdList = function(inputList, nrow, ncol) {
+    m = meanList(inputList, nrow, ncol)
+    if (!is.na(m)) {
+        sd = 0
+        count = 0
+        for (i in seq_len(length(inputList))) {
+            if (!is.na(inputList[[i]][[ncol]][nrow])) {
+                sd = sd + (m - inputList[[i]][[ncol]][nrow])**2
+                count = count + 1
+            }
+        }
+        if (count == 0) {sd = NA}
+        sd = (sd / count)**0.5
+    } else {
+        sd = NA
+    }
+    return(sd)
+}
+
+fileList = list.files("../../data/data_martin/la-icpms/mean_profiles")
+dfList = list()
+n = length(fileList)
+for (i in seq_len(n)) {
+    tab = fread(file = paste0("../../data/data_martin/la-icpms/mean_profiles/", fileList[i]), sep = ";", header = TRUE)
+    tab = tab[tab$sample_name == "Oak_ref", ]
+    if (nrow(tab) > 0) {
+        tab$sample_name = i
+        dfList[[i]] = tab
+    }
+}
+
+dfList_lod = list()
+n = length(fileList)
+for (i in seq_len(n)) {
+    tab = fread(file = paste0("../../data/data_martin/la-icpms/mean_profiles_lod/", fileList[i]), sep = ";", header = TRUE)
+    tab = tab[tab$sample_name == "Oak_ref", ]
+    if (nrow(tab) > 0) {
+        tab$sample_name = i
+        dfList_lod[[i]] = tab
+    }
+}
+
+for (i in seq_len(n)) {
+    for (elt in 3:19){
+        exclude = dfList[[i]][[elt]] < dfList_lod[[i]][[elt]]
+        dfList[[i]][[elt]][exclude] = NA
+    }
+}
+
+df_smooth = list()
+for (i in seq_len(n)) {
+    df_smooth[[i]] = as.data.table(dfList[[i]][1:40,])
+    df_smooth[[i]]$dist = seq(1, 40, 1)
+}
+
+for (i in seq_len(n)) {
+    for (r in 1:nrow(df_smooth[[i]])) {
+        for (elt in 3:19) {
+            df_smooth[[i]][[elt]][r] = mean(dfList[[i]][[elt]][ abs(dfList[[i]]$dist - df_smooth[[i]]$dist[r]) <= 1 ], na.rm = TRUE)
+        }
+    }
+}
+
+cpal = c(
+  "dodgerblue2", 
+  "#E31A1C", # red
+  "green4",
+  "#6A3D9A", # purple
+  "#FF7F00", # orange
+  "black", 
+  "gold1",
+  "skyblue2", 
+  "brown",
+  "#FB9A99", # lt pink
+  "darkturquoise", 
+  "palegreen2",
+  "maroon", 
+  "orchid1", 
+  "#CAB2D6", # lt purple
+  "#FDBF6F", # lt orange
+  "gray70", 
+  "khaki2",
+  "deeppink1", 
+  "blue1", 
+  "steelblue4",
+  "green1", 
+  "yellow4", 
+  "yellow3",
+  "darkorange4"
+)
+elt = 8
+plot(c(0,40), c(0,0.4), xlab = "distance to bark (mm)", ylab = "1/C * ICPMS signal", col = "white")
+usr <- par("usr")
+rect(
+  usr[1], usr[3],
+  usr[2], usr[4],
+  col = "grey90",
+  border = NA
+)
+for (i in seq_len(n)) { lines(df_smooth[[i]]$dist, df_smooth[[i]][[elt]], col = cpal[i]) }
+legend("topright", legend = seq_len(n), lty = 1, col = cpal[1:n], lwd = 2)
+
+```
+
+@fig-inter-series-variations-raw-signal shows the inter-series variability for the raw signal (*i.e.* signal corrected for the baseline but not standardised by the C signal). This graph clearly shows an even more pronounced variability of the K signal from one series to the next. This is not surprising because ICPMS sensitivity can change from one day to the next depending on instrument optimisation. The signal level also increases and decreases following the order of the series:
+
+* series 1, 2 and 3 are fairly similar
+* series 4 is higher
+* series 5 and 6 are higher still
+* the signal decreases gradually from series 7 to 12
+
+``` {r}
+#| echo: false
+#| label: fig-inter-series-variations-raw-signal
+#| fig-cap: "Inter-series variations of the K ICPMS signal corrected for the baseline but not standardised with the C signal"
+
+
+fileList = list.files("../../data/data_martin/la-icpms/mean_profiles_raw/")
+dfList = list()
+n = length(fileList)
+for (i in seq_len(n)) {
+    tab = fread(file = paste0("../../data/data_martin/la-icpms/mean_profiles_raw/", fileList[i]), sep = ";", header = TRUE)
+    tab = tab[tab$sample_name == "Oak_ref", ]
+    if (nrow(tab) > 0) {
+        tab$sample_name = i
+        dfList[[i]] = tab
+    }
+}
+
+dfList_lod = list()
+n = length(fileList)
+for (i in seq_len(n)) {
+    tab = fread(file = paste0("../../data/data_martin/la-icpms/mean_profiles_raw_lod/", fileList[i]), sep = ";", header = TRUE)
+    tab = tab[tab$sample_name == "Oak_ref", ]
+    if (nrow(tab) > 0) {90
+        tab$sample_name = i
+        dfList_lod[[i]] = tab
+    }
+}
+
+for (i in seq_len(n)) {
+    for (elt in 3:19){
+        exclude = dfList[[i]][[elt]] < dfList_lod[[i]][[elt]]
+        dfList[[i]][[elt]][exclude] = NA
+    }
+}
+
+df_smooth = list()
+for (i in seq_len(n)) {
+    df_smooth[[i]] = as.data.table(dfList[[i]][1:40,])
+    df_smooth[[i]]$dist = seq(1, 40, 1)
+}
+
+for (i in seq_len(n)) {
+    for (r in 1:nrow(df_smooth[[i]])) {
+        for (elt in 3:19) {
+            df_smooth[[i]][[elt]][r] = mean(dfList[[i]][[elt]][ abs(dfList[[i]]$dist - df_smooth[[i]]$dist[r]) <= 1 ], na.rm = TRUE)
+        }
+    }
+}
+
+elt = 8
+plot(c(0,40), c(0,1e5), xlab = "distance to bark (mm)", ylab = "1/C * ICPMS signal", col = "white")
+usr <- par("usr")
+rect(
+  usr[1], usr[3],
+  usr[2], usr[4],
+  col = "grey90",
+  border = NA
+)
+for (i in seq_len(n)) { lines(df_smooth[[i]]$dist, df_smooth[[i]][[elt]], col = cpal[i]) }
+legend("topright", legend = seq_len(n), lty = 1, col = cpal[1:n], lwd = 2)
+
+
+```
+
+I ran a check comparing the K/C signal for samples in series 1 and 5 (samples other than the Oak reference sample) and the average offset was also observable (@fig-comp-series-1-5).
+
+``` {r}
+#| echo: false
+#| label: fig-comp-series-1-5
+#| fig-cap: "Average K/C signal in series 1 and 5 (average of all 10 samples)"
+
+tab1 = fread(file = paste0("../../data/data_martin/la-icpms/mean_profiles/", fileList[1]), sep = ";", header = TRUE)
+tab2 = fread(file = paste0("../../data/data_martin/la-icpms/mean_profiles/", fileList[5]), sep = ";", header = TRUE)
+
+sn1 = unique(tab1$sample_name)
+sn2 = unique(tab2$sample_name)
+
+n = 10
+df_smooth1 = list()
+df_smooth2 = list()
+for (i in seq_len(n)) {
+    df_smooth1[[i]] = tab1[1:60]
+    df_smooth1[[i]]$dist = seq(1, 60, 1)
+    df_smooth2[[i]] = tab2[1:60]
+    df_smooth2[[i]]$dist = seq(1, 60, 1)
+}
+
+for (i in seq_len(n)) {
+    for (r in 1:nrow(df_smooth1[[i]])) {
+        for (elt in 3:19) {
+            temp = tab1[tab1$sample_name == sn1[i]]
+            df_smooth1[[i]][[elt]][r] = mean(
+                temp[[elt]][ abs(temp$dist - df_smooth1[[i]]$dist[r]) <= 1 ],
+                na.rm = TRUE
+            )
+            temp = tab2[tab2$sample_name == sn2[i]]
+            df_smooth2[[i]][[elt]][r] = mean(
+                temp[[elt]][ abs(temp$dist - df_smooth2[[i]]$dist[r]) <= 1 ],
+                na.rm = TRUE
+            )
+        }
+    }
+}
+
+K1 = array(data = 0, dim = 60)
+K2 = array(data = 0, dim = 60)
+for (r in 1:60) {
+    for (i in 1:n) {
+        K1[r] = K1[r] + df_smooth1[[i]]$mean.K39[r]
+        K2[r] = K2[r] + df_smooth2[[i]]$mean.K39[r]
+    }
+    K1[r] = K1[r] / n
+    K2[r] = K2[r] / n
+}
+
+plot(1:60, K1, type = 'l', ylim = c(0, 0.3), xlab = "distance to bark (mm)", ylab = "1/C * ICPMS signal")
+lines(1:60, K2, col = "red")
+legend("topright", legend = c("series 1", "series 5"), lty = 1, lwd = 2, col = c("black", "red"))
+
+K1 = array(data = 0, dim = 60)
+K2 = array(data = 0, dim = 60)
+for (r in 1:60) {
+    for (i in 1:n) {
+        K1[r] = K1[r] + df_smooth1[[i]]$mean.Mn55[r]
+        K2[r] = K2[r] + df_smooth2[[i]]$mean.Mn55[r]
+    }
+    K1[r] = K1[r] / n
+    K2[r] = K2[r] / n
+}
+
+
+plot(1:60, K1, type = 'l', ylim = c(0, 1.5), xlab = "distance to bark (mm)", ylab = "1/C * ICPMS signal")
+lines(1:60, K2, col = "red")
+legend("topright", legend = c("series 1", "series 5"), lty = 1, lwd = 2, col = c("black", "red"))
+
+
+```
+
+::: {.callout-important}
+
+# Conclusion
+
+Inter-series variability does not seem to be simply ramdom errors but due to instrumental drift over the different analysis days. A correction needs to be established to remove this error.
+
+:::
+
+
+## Data correction methodology
+
+We need to determine two reference points in the oak reference measurements: a high value and a low value. From these two values we can normalise the data setting the high value to 1 and the low value to 0 for example. The high and low reference points cannot be minimums and maximums because that can be a little too random. Instead we need to define segments of the reference wood core and calculate average values for these segments. One segment could be in the sapwood and one in the heartwood. However, the position and size of the segments will probably require to be adjusted for each chemical element.

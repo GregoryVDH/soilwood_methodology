@@ -1,0 +1,35 @@
+project:
+  type: book
+
+book:
+  title: "No title"
+  subtitle: "No title"
+  author: "Gregory van der Heijden"
+  date: last-modified
+  chapters:
+    - index.qmd
+    - part: "LA-ICPMS"
+      chapters:
+        - md/1_LA-ICPMS/0_LA-ICPMS.qmd
+        - md/1_LA-ICPMS/1_LA-ICPMS_variability.qmd
+    - part: "iTrax"
+      chapters:
+        - md/2_iTrax/0_iTrax.qmd
+
+execute:
+    warning: false
+    message: false
+    freeze: auto
+    fig-width: 10
+    fig-height: 8
+    fig-dpi: 300
+
+format:
+    html:
+        toc: true
+        toc-location: right
+        toc-title: "Contents"
+        code-fold: true
+        theme: cosmo
+        css: styles.css
+        page-layout: article
