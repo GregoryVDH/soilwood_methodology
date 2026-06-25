@@ -8,13 +8,14 @@ book:
   date: last-modified
   chapters:
     - index.qmd
-    - part: "1. LA-ICPMS"
+    - part: "LA-ICPMS"
       chapters:
         - md/1_LA-ICPMS/0_LA-ICPMS.qmd
         - md/1_LA-ICPMS/1_LA-ICPMS_variability.qmd
-    - part: "2. iTrax"
+    - part: "iTrax"
       chapters:
         - md/2_iTrax/0_iTrax.qmd
+
   
 execute:
     warning: false
@@ -24,6 +25,9 @@ execute:
     fig-height: 8
     fig-dpi: 300
     fig.show: "hold"
+
+# crossref:
+#   chapters: false
 
 format:
     html:
@@ -36,5 +40,5 @@ format:
         page-layout: article
         comments: 
           hypothesis: true
-        number-sections: false
-        # number-depth: 2
+        number-sections: true
+        number-depth: 3

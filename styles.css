@@ -38,3 +38,15 @@ ol {
 .indented {
   margin-left: 2em;
 }
+
+/* Target only ordered lists inside the sidebar nav to hide the numbers */
+#quarto-sidebar nav ol, 
+#quarto-sidebar nav ol li {
+  list-style-type: none !important;
+}
+
+/* Target only explicit chapter-number spans that live inside the sidebar container */
+#quarto-sidebar span.chapter-number {
+  display: none !important;
+}
+

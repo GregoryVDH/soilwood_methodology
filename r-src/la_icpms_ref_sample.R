@@ -1,7 +1,34 @@
 #  %%
 
-library(data.table)
 rm(list = ls(all = TRUE))
+library(data.table)
+cpal = c(
+  "dodgerblue2", 
+  "#E31A1C", # red
+  "green4",
+  "#6A3D9A", # purple
+  "#FF7F00", # orange
+  "black", 
+  "gold1",
+  "skyblue2", 
+  "brown",
+  "#FB9A99", # lt pink
+  "darkturquoise", 
+  "palegreen2",
+  "maroon", 
+  "orchid1", 
+  "#CAB2D6", # lt purple
+  "#FDBF6F", # lt orange
+  "gray70", 
+  "khaki2",
+  "deeppink1", 
+  "blue1", 
+  "steelblue4",
+  "green1", 
+  "yellow4", 
+  "yellow3",
+  "darkorange4"
+)
 
 meanList = function(inputList, nrow, ncol) {
     m = 0
@@ -51,6 +78,8 @@ sdList = function(inputList, nrow, ncol) {
 #   "darkorange4", "brown"
 # )
 
+# %% data input for pdf files ----
+
 fileList = list.files("./data/data_martin/la-icpms/mean_profiles_noCorr_C13BL")
 dfList = list()
 n = length(fileList)
@@ -63,24 +92,6 @@ for (i in seq_len(n)) {
     }
 }
 
-
-# dfList_lod = list()
-# n = length(fileList)
-# for (i in seq_len(n)) {
-#     tab = fread(file = paste0("./data/data_martin/la-icpms/mean_profiles_lod/", fileList[i]), sep = ";", header = TRUE)
-#     tab = tab[tab$sample_name == "Oak_ref", ]
-#     if (nrow(tab) > 0) {90
-#         tab$sample_name = i
-#         dfList_lod[[i]] = tab
-#     }
-# }
-
-# for (i in seq_len(n)) {
-#     for (elt in 3:19){
-#         exclude = dfList[[i]][[elt]] < dfList_lod[[i]][[elt]]
-#         dfList[[i]][[elt]][exclude] = NA
-#     }
-# }
 
 df_smooth = list()
 for (i in seq_len(n)) {
@@ -97,57 +108,17 @@ for (i in seq_len(n)) {
 }
 
 
-# elt = 8
-# plot(c(0,40), c(0,0.3), xlab = "distance to bark (mm)", ylab = "1/C * ICPMS signal", col = "white")
-# for (i in seq_len(n)) { 
-#     plotdata = df_smooth[[i]][[elt]]
-#     # plotdata = plotdata - mean(df_smooth[[i]][[elt]][df_smooth[[i]]$dist >= 20 & df_smooth[[i]]$dist <= 30])
-#     # plotdata = plotdata / max(plotdata, na.rm = TRUE)
-#     lines(
-#         plotdata, 
-#         col = c25[i], 
-#         lwd = 2
-#     ) 
-# }
 
-
-cpal = c(
-  "dodgerblue2", 
-  "#E31A1C", # red
-  "green4",
-  "#6A3D9A", # purple
-  "#FF7F00", # orange
-  "black", 
-  "gold1",
-  "skyblue2", 
-  "brown",
-  "#FB9A99", # lt pink
-  "darkturquoise", 
-  "palegreen2",
-  "maroon", 
-  "orchid1", 
-  "#CAB2D6", # lt purple
-  "#FDBF6F", # lt orange
-  "gray70", 
-  "khaki2",
-  "deeppink1", 
-  "blue1", 
-  "steelblue4",
-  "green1", 
-  "yellow4", 
-  "yellow3",
-  "darkorange4"
-)
-# %%
-elt_list = c(3,4,7,8,9,11,12,15,16,17,18)
-maxVal = c(4, 2.5, 0.3, NA, 0.5, NA, 3, 0.7, 1.5, 6, NA)
-pdf(file = "./pdf/no_baseline_correction_C13BL.pdf", title = "baseline_cono_baseline_correction_C13BLrrection_C_norm")
+# %% pdf files comparing BL corrections ----
+elt_list = 3:19
+maxVal = c(3, 2.5, 0.5, 0.6, 0.3, 0.4, 0.5, 10, 1.7, 3, 2, 0.4, 0.7, 1.5, 6, 2.5, 0.4)
+pdf(file = "./pdf/no_baseline_correction_C13BL.pdf", title = "no_baseline_correction_C13BL")
 for (j in seq_len(length(elt_list))) {
     elt = elt_list[j]
     if (is.na(maxVal[j])) {
         maxVal[j] = 0
         for (i in seq_len(n)) {
-            maxVal[j] = max(maxVal[j], max(df_smooth[[i]][[elt]], na.rm = TRUE))
+            maxVal[j] = max(maxVal[j], max(df_smooth[[i]][[elt]][1:30], na.rm = TRUE))
         }
     }
     plot(
@@ -161,12 +132,12 @@ for (j in seq_len(length(elt_list))) {
     col = "grey90",
     border = NA
     )
-    for (i in seq_len(n)) { lines(df_smooth[[i]]$dist, df_smooth[[i]][[elt]], col = cpal[i], lwd =2) }
+    for (i in seq_len(n)) { lines(df_smooth[[i]]$dist[1:30], df_smooth[[i]][[elt]][1:30], col = cpal[i], lwd =2) }
     legend("topright", legend = seq_len(n), lty = 1, col = cpal[1:n], lwd = 2)
 }
 dev.off()
 
-#  %%
+#  %% inter-series correction methods ----
 
 for (elt in 3:19) {
     plot(
@@ -285,12 +256,8 @@ for (i in seq_len(n)) { lines(df_smooth[[i]]$dist, df_smooth[[i]][[elt]] + corre
 
 
 
+# raw data (not standardised by C signal) ----
 
-# ==============================================
-# 
-## raw data => not standardised by C signal
-# 
-# ==============================================
 
 fileList = list.files("./data/data_martin/la-icpms/mean_profiles_raw/")
 dfList = list()
@@ -559,3 +526,9 @@ legend("topright", legend = c("series 1", paste0("series ", s)), lty = 1, lwd = 
 
 
 # %%
+
+
+fileList = list.files("./data/data_martin/la-icpms/baseline_levels")
+i = 3
+tab = read.table(file = paste0("./data/data_martin/la-icpms/baseline_levels/", fileList[i]), sep = ";", head = TRUE)
+tab = tab[tab$sample_name == "Oak_ref", ]

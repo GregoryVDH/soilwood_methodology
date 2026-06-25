@@ -1,4 +1,7 @@
-# LA-ICPMS inter-series variability
+---
+title: "LA-ICPMS inter-series variability"
+---
+
 
 ```{r}
 #| label: setup
@@ -89,7 +92,37 @@ source("../../r-src/1_LA-ICPMS/fig-inter-series-var-P.R")
 
 Even when using the baseline-corrected data (like in the case of phosphorus), a certain amount of variability between series is observed for the higher values which (just like K) is probably explained by different slope values for the ICPMS detector's response to increasing P concentrations.
 
-The different behaviors reported here are likely explained by the signal to baseline ratio. 
+The different behaviors reported here are likely explained by the signal to baseline ratio. In @tbl-elementn-correction-methods 
+
+``` {r}
+#| echo: false
+#| label: tbl-elementn-correction-methods
+#| tbl-cap: "Preferred baseline correction method for each element and order of magnitude of the median signal to baseline ratio expressed in units of standard deviation around the baseline"
+#| tbl-cap-location: bottom
+
+df = data.frame(
+    element = c(
+        "Na", "Mg", "Al", "Si", "P", "K", "Ca", "Ti", "Mn", "Fe", "Cu", "Zn", "Ga", "Rb", "Sr", "Ba", "Pb"
+    ), 
+    BL_corr = c(
+        1, 0, 0, 1, 1, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0
+    ), 
+    median = c(
+        4.8, 63, 1.07, 3.7, 4.98, 10.95, 4.32, 1.04, 91, 1.9, 9.92, 1.5, 22, 20.89, 178, 209, 7.7
+    )
+) 
+
+df$BL_corr[df$BL_corr == 0] = "NO"
+df$BL_corr[df$BL_corr == 1] = "YES"
+
+kable(
+  df,
+  row.names = FALSE,
+  col.names = c("element", "baseline correction", "median signal to baseline"),
+  align = "lcc"
+)
+
+```
 
 ::: {.callout-important}
 
@@ -104,4 +137,19 @@ The different behaviors reported here are likely explained by the signal to base
 
 ## Data correction methodology
 
-We need to determine two reference points in the oak reference measurements: a high value and a low value. 
+Biases due to differences in ICPMS detector response to elemental concentrations can be reduced by standardising all sample sample series data to one reference series. This standardisation procedure is carried out by modelling the elemental signal measured for the Oak reference wood core in the reference sample series from the elemental signal measured for the Oak reference wood core in any other of the 11 series. @fig-inter-series-calibration_K shows the type of relationship between the two datasets. While close to linear a best fit is obtained with a second degree polynomial regression.
+
+``` {r}
+#| echo: false
+#| label: fig-inter-series-calibration_K
+#| fig-cap: "Modelling the elemental signal in the oak reference wood core in the reference sample series (in this example the reference series in n°1 and the series to correct is series n°5)"
+#| fig-subcap: 
+#|  - "Relationship between the two datasets. The continuous line represents teh polynomial regression model"
+#|  - "K elemental signal (K/C) in the oak reference wood core for the reference series (in black), series 05 (in red) and series 05 after data standardisation (in green)"
+#| fig-align: center
+#| cache: false
+
+source("../../r-src/1_LA-ICPMS/fig-inter-series-calibration_K.R")
+
+```
+
