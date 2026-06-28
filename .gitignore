@@ -2,3 +2,8 @@ pdf/
 data/
 /.quarto/
 **/*.quarto_ipynb
+.quarto/
+_book/
+_freeze/
+bib_review_files/
+quarto_files/
