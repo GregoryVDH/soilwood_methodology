@@ -1,14 +1,20 @@
 {
-  "md/1_LA-ICPMS/1_LA-ICPMS_variability.qmd": {
-    "1_LA-ICPMS_variability.html": "a06f347c"
+  "md/2_LA-ICPMS/1_LA-ICPMS_variability.qmd": {
+    "1_LA-ICPMS_variability.html": "9a4f81ba"
   },
   "index.qmd": {
-    "index.html": "e2fa9a44"
+    "index.html": "830bbddc"
   },
-  "md/1_LA-ICPMS/0_LA-ICPMS.qmd": {
-    "0_LA-ICPMS.html": "30deade0"
+  "md/1_Material-Methods/0_Material_Methods.qmd": {
+    "0_Material_Methods.html": "4c6c414d"
   },
-  "md/2_iTrax/0_iTrax.qmd": {
-    "0_iTrax.html": "b9c9d8da"
+  "md/2_LA-ICPMS/0_LA-ICPMS.qmd": {
+    "0_LA-ICPMS.html": "59e96142"
+  },
+  "md/2_LA-ICPMS/1_LA-ICPMS_IS_variability.qmd": {
+    "1_LA-ICPMS_IS_variability.html": "0e1f9348"
+  },
+  "md/3_iTrax/0_iTrax.qmd": {
+    "0_iTrax.html": "24ebc221"
   }
 }

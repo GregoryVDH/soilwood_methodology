@@ -80,11 +80,11 @@ sdList = function(inputList, nrow, ncol) {
 
 # %% data input for pdf files ----
 
-fileList = list.files("./data/data_martin/la-icpms/mean_profiles_noCorr_C13BL")
+fileList = list.files("./data/data_martin/la-icpms/mean_profiles")
 dfList = list()
 n = length(fileList)
 for (i in seq_len(n)) {
-    tab = fread(file = paste0("./data/data_martin/la-icpms/mean_profiles_noCorr_C13BL/", fileList[i]), sep = ";", header = TRUE)
+    tab = fread(file = paste0("./data/data_martin/la-icpms/mean_profiles/", fileList[i]), sep = ";", header = TRUE)
     tab = tab[tab$sample_name == "Oak_ref", ]
     if (nrow(tab) > 0) {
         tab$sample_name = i
@@ -112,7 +112,7 @@ for (i in seq_len(n)) {
 # %% pdf files comparing BL corrections ----
 elt_list = 3:19
 maxVal = c(3, 2.5, 0.5, 0.6, 0.3, 0.4, 0.5, 10, 1.7, 3, 2, 0.4, 0.7, 1.5, 6, 2.5, 0.4)
-pdf(file = "./pdf/no_baseline_correction_C13BL.pdf", title = "no_baseline_correction_C13BL")
+# pdf(file = "./pdf/mixed_baseline_correction.pdf", title = "mixed_baseline_correction")
 for (j in seq_len(length(elt_list))) {
     elt = elt_list[j]
     if (is.na(maxVal[j])) {
@@ -135,7 +135,7 @@ for (j in seq_len(length(elt_list))) {
     for (i in seq_len(n)) { lines(df_smooth[[i]]$dist[1:30], df_smooth[[i]][[elt]][1:30], col = cpal[i], lwd =2) }
     legend("topright", legend = seq_len(n), lty = 1, col = cpal[1:n], lwd = 2)
 }
-dev.off()
+# dev.off()
 
 #  %% inter-series correction methods ----
 

@@ -30,11 +30,11 @@ cpal = c(
 )
 
 
-fileList = list.files("../../data/data_martin/la-icpms/mean_profiles_noCorr")
+fileList = list.files("../../data/data_martin/la-icpms/mean_profiles")
 dfList = list()
 n = length(fileList)
 for (i in seq_len(n)) {
-    tab = fread(file = paste0("../../data/data_martin/la-icpms/mean_profiles_noCorr/", fileList[i]), sep = ";", header = TRUE)
+    tab = fread(file = paste0("../../data/data_martin/la-icpms/mean_profiles/", fileList[i]), sep = ";", header = TRUE)
     tab = tab[tab$sample_name == "Oak_ref", ]
     if (nrow(tab) > 0) {
         tab$sample_name = i

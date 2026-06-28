@@ -1,0 +1,20 @@
+---
+title: "Overview"
+---
+
+## Task list 
+
+* Detection limits
+* Inter-series variability
+    - quantify variability
+    - correction equations ?
+* Sample beginning position: where do you place x-axis origin?
+    - Compile the Cu wire distance measurement data into the database
+    - establish the sample origin point from Cu wire distance: Cu signal, Cd signal, Pb signal, Density signal
+    - establish the sample origin from correlating iTrax data to LA-ICPMS
+    - Establish a method to determine the sample origin from density data alone
+* iTrax resolution
+    - Copper wire tests to assess the integrated volume of sample along the X-axis
+    - Tests to assess the integrated sample volume depth
+    - Tests to assess the integrated volume of sample along the y-axis ?
+

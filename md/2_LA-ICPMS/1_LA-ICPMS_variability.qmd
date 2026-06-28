@@ -1,0 +1,232 @@
+# LA-ICPMS inter-series variability
+
+
+
+## Quantifying the amount if variation between sample series
+
+```{r}
+#| label: setup
+#| echo: false
+
+library(knitr)
+
+knitr::opts_chunk$set(
+    cache = TRUE, 
+    echo = FALSE,
+    fig.width = 8,
+    fig.height = 6
+)
+
+default_par <- par(no.readonly = TRUE)
+
+library(data.table)
+source("../../r-src/1_LA-ICPMS/fct.R")
+
+# rainbow(8)
+# heat.colors(8)
+# terrain.colors(8)
+# topo.colors(8)
+# cm.colors(8)
+# gray.colors(8)
+
+```
+
+
+
+The 100 wood core samples of the SoilWood project were not analysed in one single analysis run. The 100 samples were analysed in 12 different series. These different series were analysed at different dates with between series the ICPMS being shut down. This means that the instrument conditions at each series of samples were not the same and these different conditions can lead to variations in ICPMS elemental signals. In this section, I investigate the amount of variation that may occur between sample series runs due to variations in ICPMS instrument sensitivity and detector response from one day to the next. To assess and quantify this inter-series variation, a reference Oak wood core was analysed in each of the 12 sample series. 
+
+The initial intuition to process the LA-ICPMS data in order to minimise variations between sample series was to first correct all elemental signals for the baseline signal (*i.e.* the ICPMS signal measured between ablation events when only He gas is sent to the plasma). Second, all baseline corrected signal are standardised by the C-13 signal to obtain elemental ratios such as K/C for example. Standardising the elemental signals with the C-13 ratio drastically decreases the inter-series variability as shown by comparing @fig-inter-series-variations-raw-signal and @fig-inter-series-variations-oak-ref. 
+
+``` {r}
+#| echo: false
+#| label: fig-inter-series-variations-raw-signal
+#| fig-cap: "Inter-series variations of the K ICPMS signal corrected for the baseline but not standardised with the C signal"
+#| fig-align: center
+
+source("../../r-src/1_LA-ICPMS/fig-inter-series-variations-raw-signal-K.R")
+```
+
+``` {r}
+#| echo: false
+#| label: fig-inter-series-variations-oak-ref
+#| fig-cap: "Measured K/C signal for the oak reference wood core over the 12 sample series"
+#| fig-align: center
+
+source("../../r-src/1_LA-ICPMS/fig-inter-series-variations-oak-ref-K.R")
+```
+
+
+@fig-inter-series-variations-raw-signal shows the inter-series variability for the raw signal (*i.e.* signal corrected for the baseline but not standardised by the C signal). **This graph clearly shows a pronounced variability of the K signal from one series to the next**. This is not surprising because ICPMS sensitivity can change from one day to the next depending on instrument optimisation. The signal level also increases and decreases following the order of the series:
+
+**Standardising the signal with the C-13 signal (@fig-inter-series-variations-oak-ref) lower inter-series variability but the variability remains non negligible**. I ran a check comparing the K/C signal for samples in series 1 and 5 (samples other than the Oak reference sample) and the offset between these two series was also observable (data not shown) which strongly suggests that it is due to inter-series variability and not simply random error when measuring the oak reference wood core.
+
+After this, I tried looking at elemental signals standardized to the C-13 signal but without subtracting the baseline. This data processing decreased significantly the inter-series variability for certain elements like Mg or K as shown in @fig-inter-series-var-noBLcorr. The inter-series variability is very low in the heartwood for all series except Series 5. Given the variability observed for the non-C13-standardised data (@fig-inter-series-variations-raw-signal), it is likely that the slope of the detector's response to increasing K concentrations changes from one series to the other. 
+
+``` {r}
+#| echo: false
+#| label: fig-inter-series-var-noBLcorr
+#| fig-cap: "Measured K/C signal (no baseline correction for K or C) for the oak reference wood core over the 12 sample series"
+#| fig-align: center
+
+source("../../r-src/1_LA-ICPMS/fig-inter-series-var-noBLcorr-K.R")
+
+```
+
+I also looked at the variability for elemental signals with no baseline correction standardised with a baseline-corrected C13 signal. The results were somewhat similar to @fig-inter-series-var-noBLcorr but the amount of variance was sligntly higher.
+
+However, for other elements such as **[[phosphorus]{.underline}]{style="color:red;"}**, variability between series was lowest when considering the baseline-corrected data as shown in @fig-inter-series-var-P.
+
+``` {r}
+#| echo: false
+#| label: fig-inter-series-var-P
+#| fig-cap: "Inter-series variations of the phosphorus signal for the oak reference wood core over the 12 sample series"
+#| fig-height: 4
+#| fig-subcap: 
+#|  - "Baseline-corrected data"
+#|  - "No baseline correction"
+#| layout-ncol: 1
+#| fig-align: center
+
+source("../../r-src/1_LA-ICPMS/fig-inter-series-var-P.R")
+
+```
+
+Even when using the baseline-corrected data (like in the case of phosphorus), a certain amount of variability between series is observed for the higher values which (just like K) is probably explained by different slope values for the ICPMS detector's response to increasing P concentrations.
+
+The different behaviors reported here are likely explained by the signal to baseline ratio. In @tbl-elementn-correction-methods 
+
+``` {r}
+#| echo: false
+#| label: tbl-elementn-correction-methods
+#| tbl-cap: "Preferred baseline correction method for each element and order of magnitude of the median signal to baseline ratio expressed in units of standard deviation around the baseline"
+#| tbl-cap-location: bottom
+
+df = data.frame(
+    element = c(
+        "Na", "Mg", "Al", "Si", "P", "K", "Ca", "Ti", "Mn", "Fe", "Cu", "Zn", "Ga", "Rb", "Sr", "Ba", "Pb"
+    ), 
+    BL_corr = c(
+        1, 0, 0, 1, 1, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0
+    ), 
+    median = c(
+        4.8, 63, 1.07, 3.7, 4.98, 10.95, 4.32, 1.04, 91, 1.9, 9.92, 1.5, 22, 20.89, 178, 209, 7.7
+    )
+) 
+
+df$BL_corr[df$BL_corr == 0] = "NO"
+df$BL_corr[df$BL_corr == 1] = "YES"
+
+kable(
+  df,
+  row.names = FALSE,
+  col.names = c("element", "baseline correction", "median signal to baseline"),
+  align = "lcc"
+)
+
+```
+
+::: {.callout-important}
+
+# Conclusion
+
+1. Inter-series variability does not seem to be simply ramdom errors but due to instrumental drift over the different analysis days. 
+2. The LA-ICPMS processing method (baseline correction or not) needs to be adapted to each individual element
+3. A correction equation needs to be established to further reduce inter-series variance.
+
+:::
+
+
+## Data correction methodology
+
+Biases due to differences in ICPMS detector response to elemental concentrations can be reduced by standardising all sample sample series data to one reference series. This standardisation procedure is carried out by modelling the elemental signal measured for the Oak reference wood core in the reference sample series from the elemental signal measured for the Oak reference wood core in any other of the 11 series. @fig-inter-series-calibration_K shows the type of relationship between the two datasets. While close to linear a best fit is obtained with a second degree polynomial regression. The following example was obtained by comparing the oak reference in series n°1 (AUD) and n°5 (SAM). The oak reference sample data in this example were smoothed by calculating a mean data point every millimeter (to reduce local variability and highlight main trends).
+
+``` {r}
+#| echo: false
+#| label: fig-inter-series-calibration_K
+#| fig-cap: "Modelling the elemental signal in the oak reference wood core in the reference sample series (in this example the reference series in n°1 and the series to correct is series n°5)"
+#| fig-subcap: 
+#|  - "Relationship between the two datasets. The continuous line represents teh polynomial regression model"
+#|  - "K elemental signal (K/C) in the oak reference wood core for the reference series (in black), series 05 (in red) and series 05 after data standardisation (in green)"
+#| fig-align: center
+#| cache: false
+
+source("../../r-src/1_LA-ICPMS/fig-inter-series-calibration_K.R")
+
+```
+
+Special care must be taken when fitting polynomial regression models because polynomial regressions can generate models with a *bell-shaped curve* which would cause a bias when standardising the data to the reference series. To overcome this issue, I used the R library `limSolve` which enables to constrain the polynomial model to remain monotonous over a user defined range. In this case, the range needs to be defined not just from the minimum and maximum measured data in the *oak reference* wood cores but from the minimum and maximumu values measured for a given element in the entire sample series.
+
+Smoothing the data is a necessary step. @fig-oak-ref-comparison-noSmoothing shows the scatterplot between the two oak reference of series n°1 and n°5 including all measured data points (no smoothing). This figure shows that the local variability at a 25µm resolution is too high to reasonnably fit a model between both series. **Smoothing the oak reference sample data is necessary**.
+
+``` {r}
+#| echo: false
+#| label: fig-oak-ref-comparison-noSmoothing
+#| fig-cap: "Relationship between the oak reference samples of series n°1 and n°5 with no data smoothing"
+
+source("../../r-src/1_LA-ICPMS/fig_oak-ref-comparison-noSmoothing.R")
+
+```
+
+A more interesting way of smoothing the laser-ablation data is to use a **Savitzky-Golay filter** from the `signal` R library. The Savitzky-Golay algorithm fits local low-degree polynomials to the data using least squares. It smooths out high-frequency noise while preserving peak heights and widths. The filter can be parametrised using the polynome degree and the integration windows size parameters.
+
+
+``` {r}
+#| echo: false
+#| label: fig-SGF-example
+#| fig-cap: "Example of Savitzky-Golay filter smoothing (K/C signal in series 1) with different integration windows (*int*). The grey line is the original 25µm resolution data, green line (int = 500µm), red line (int = 1000µm), blue (int = 4000µm)"
+#| fig-align: center
+
+
+library(data.table)
+library(signal)
+library(zoo)
+source("../../r-src/1_LA-ICPMS/fct.R")
+
+odd_int = function(num) {
+    if (floor(num/2) == num / 2) {
+        return(FALSE)
+    } else {
+        return(TRUE)
+    }
+}
+
+n_sgf = function(int_win, resolution = 25) {
+    if (odd_int(floor(int_win / resolution))) {
+        n_sgf = floor(int_win / resolution)
+    } else {
+        n_sgf = floor(int_win / resolution) + 1
+    }
+    return(n_sgf)
+}
+
+fileList = list.files("../../data/data_martin/la-icpms/mean_profiles")
+tab1 = fread(file = paste0("../../data/data_martin/la-icpms/mean_profiles/", fileList[1]), sep = ";", header = TRUE)
+# tab2 = fread(file = paste0("./data/data_martin/la-icpms/mean_profiles/", fileList[3]), sep = ";", header = TRUE)
+
+elt = 8
+df = data.frame(
+    dist = tab1$dist[tab1$sample_name == "Oak_ref"],
+    x = tab1[[elt]][tab1$sample_name == "Oak_ref"]
+)
+
+resolution = 25
+int_win = 1000
+
+
+element_filled = na.approx(df$x, na.rm = FALSE, rule = 2)
+df$x_sgf <- sgolayfilt(element_filled, p = 2, n = n_sgf(1000))
+df$x_sgf2 <- sgolayfilt(element_filled, p = 2, n = n_sgf(4000))
+df$x_sgf3 <- sgolayfilt(element_filled, p = 2, n = n_sgf(500))
+
+par(mar = c(4,4,1,1))
+plot(
+    df$dist, df$x, col = "grey70", cex = 0.8, type ="o",
+    xlab = "distance to bark (mm)",
+    ylab = "1/C ICPMS signal"
+)
+lines(df$dist, df$x_sgf, col = "red", lwd = 2)
+lines(df$dist, df$x_sgf2, col = "blue", lwd = 2)
+lines(df$dist, df$x_sgf3, col = "#20d31a", lwd = 2)
+par(default_par)
+
+```
