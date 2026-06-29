@@ -1,3 +1,8 @@
+# symlink files
+md
+r-src
+data
+
 pdf/
 data/
 /.quarto/
@@ -7,4 +12,3 @@ _book/
 _freeze/
 bib_review_files/
 quarto_files/
-data
