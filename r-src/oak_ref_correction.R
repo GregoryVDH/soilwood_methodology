@@ -46,9 +46,8 @@ for (i in seq_len(n)) {
 
 dfCorr = dfList
 
-elt = 8
+run_ref = 10
 
-run_ref = 1
 run_seq = seq_len(n)
 run_seq[which(run_seq == run_ref)] = NA
 run_seq = run_seq[!is.na(run_seq)]
@@ -95,7 +94,6 @@ if (!dir.exists("./data/data_martin/la-icpms/mean_profile_oakRefCorr")) {
     dir.create("./data/data_martin/la-icpms/mean_profile_oakRefCorr")
 }
 
-fileList
 for (i in seq_len(n)) {
     data.table::fwrite(
         x = dfCorr[[i]], 

@@ -237,7 +237,7 @@ par(default_par)
 
 # SoilWood data correction protocol
 
-1. Selection of a reference series to which all other series will be standardised. It is best to select a site with intermediary chemical fertility ("average" or "median" site).
+1. Selection of a reference series to which all other series will be standardised. I selected a sample series for which the standatdised data had an *average* behaviour for the oak reference wood core: *i.e.* average concentration profile compared to the other series. This led to selecting series n°10 (**Renecofor CHS 57B**). 
 2. For each series (other than the reference series), determine the min and maximum measured ICPMS signal for each element (expressed in *1/C ICPMS signal*) 
 3. Smooth the laser ablation data of the oak reference samples for both the reference series and the standardised series using a Savitzky-Golay filter with parameters set to `p = 2` (second degree polynome) and `n=161` (integration over 4 mm - 2mm left and write).
 4. Fit a polynomial model (one model per element) predicting the smoothed oak reference data in the reference series from the standardised series constraining the model to be monotonous over the range defined by the minimum and maximum values determines in *step 2*
