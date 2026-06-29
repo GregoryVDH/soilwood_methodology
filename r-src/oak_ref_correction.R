@@ -47,51 +47,62 @@ for (i in seq_len(n)) {
 dfCorr = dfList
 
 elt = 8
-minVal = 1e12
-maxVal = -1e12
-for (run in seq_len(n)) {
-    t = dfList[[run]][[elt]]
-    minVal = min(c(minVal, min(t, na.rm = TRUE)))
-    maxVal = max(c(maxVal, max(t, na.rm = TRUE)))
-}
-rm(t)
 
 run_ref = 1
-run = 5
-nrows = min_nrow(dfList[[run]], dfList[[run_ref]])
-df = data.frame(
-    x = dfList[[run]][[elt]][dfList[[run]]$sample_name == "Oak_ref"][1:nrows],
-    y = dfList[[run_ref]][[elt]][dfList[[run_ref]]$sample_name == "Oak_ref"][1:nrows]
-)
+run_seq = seq_len(n)
+run_seq[which(run_seq == run_ref)] = NA
+run_seq = run_seq[!is.na(run_seq)]
+for (elt in 3:19) {
+    for (run in run_seq) {
+        cat("\r", "Element: ", (elt-2), " / 17 - run: ", which(run == run_seq), " / 11")
+        # Find minimum and maximum value for all samples in the series
+        minVal = 1e12
+        maxVal = -1e12
+        t = dfList[[run]][[elt]]
+        minVal = min(c(minVal, min(t, na.rm = TRUE)))
+        maxVal = max(c(maxVal, max(t, na.rm = TRUE)))
+        rm(t)
 
-int_win = 4000
-element_filled = na.approx(df$x, na.rm = FALSE, rule = 2)
-df$x_sgf <- sgolayfilt(element_filled, p = 2, n = n_sgf(int_win))
-element_filled = na.approx(df$y, na.rm = FALSE, rule = 2)
-df$y_sgf <- sgolayfilt(element_filled, p = 2, n = n_sgf(int_win))
+        nrows = min_nrow(dfList[[run]], dfList[[run_ref]])
+        df = data.table(
+            dist = dfList[[run]]$dist[dfList[[run]]$sample_name == "Oak_ref"][1:nrows], 
+            x = dfList[[run]][[elt]][dfList[[run]]$sample_name == "Oak_ref"][1:nrows],
+            y = dfList[[run_ref]][[elt]][dfList[[run_ref]]$sample_name == "Oak_ref"][1:nrows]
+        )
+        df = df[df$dist < 30] 
 
-res = fit_poly(
-    data = df,
-    x_name = "x_sgf",
-    y_name = "y_sgf",
-    x_min = minVal,
-    x_max = maxVal,
-    direction = "increasing"
-)
+        int_win = 4000
+        element_filled = na.approx(df$x, na.rm = FALSE, rule = 2)
+        df$x_sgf <- sgolayfilt(element_filled, p = 2, n = n_sgf(int_win))
+        element_filled = na.approx(df$y, na.rm = FALSE, rule = 2)
+        df$y_sgf <- sgolayfilt(element_filled, p = 2, n = n_sgf(int_win))
 
-# plot(df$x_sgf, df$y_sgf, xlim = c(minVal, maxVal), ylim = c(minVal, maxVal))
-# lines(
-#     seq(minVal, maxVal, (maxVal-minVal) / 1000),
-#     res$coefficients[1] + res$coefficients[2] * seq(minVal, maxVal, (maxVal-minVal) / 1000) + res$coefficients[3] * seq(minVal, maxVal, (maxVal-minVal) / 1000)**2 
-# )
-beta = res$coefficients
-dfCorr[[run]][[elt]] = beta[1] + beta[2] * dfList[[run]][[elt]] + beta[3] * dfList[[run]][[elt]]**2
+        res = fit_poly(
+            data = df,
+            x_name = "x_sgf",
+            y_name = "y_sgf",
+            x_min = minVal,
+            x_max = maxVal,
+            direction = "increasing"
+        )
 
+        beta = res$coefficients
+        dfCorr[[run]][[elt]] = beta[1] + beta[2] * dfList[[run]][[elt]] + beta[3] * dfList[[run]][[elt]]**2
+    }
+}
+cat("\n")
+if (!dir.exists("./data/data_martin/la-icpms/mean_profile_oakRefCorr")) {
+    dir.create("./data/data_martin/la-icpms/mean_profile_oakRefCorr")
+}
 
-nameList = unique(dfCorr[[run]]$sample_name)
-i = 2
-tab = dfCorr[[run]][dfCorr[[run]]$sample_name == nameList[i]]
-tab2 = dfList[[run]][dfList[[run]]$sample_name == nameList[i]]
-plot(tab$dist, tab[[elt]], type = "l")
-lines(tab2$dist, tab2[[elt]], col = "red")
-i = i +1
+fileList
+for (i in seq_len(n)) {
+    data.table::fwrite(
+        x = dfCorr[[i]], 
+        file = paste0("./data/data_martin/la-icpms/mean_profile_oakRefCorr/", fileList[i]),
+        append = FALSE,
+        sep = ";",
+        row.names = FALSE,
+        col.names = TRUE
+    )
+}

@@ -230,3 +230,17 @@ lines(df$dist, df$x_sgf3, col = "#20d31a", lwd = 2)
 par(default_par)
 
 ```
+
+
+
+::: {.callout-important}
+
+# SoilWood data correction protocol
+
+1. Selection of a reference series to which all other series will be standardised. It is best to select a site with intermediary chemical fertility ("average" or "median" site).
+2. For each series (other than the reference series), determine the min and maximum measured ICPMS signal for each element (expressed in *1/C ICPMS signal*) 
+3. Smooth the laser ablation data of the oak reference samples for both the reference series and the standardised series using a Savitzky-Golay filter with parameters set to `p = 2` (second degree polynome) and `n=161` (integration over 4 mm - 2mm left and write).
+4. Fit a polynomial model (one model per element) predicting the smoothed oak reference data in the reference series from the standardised series constraining the model to be monotonous over the range defined by the minimum and maximum values determines in *step 2*
+5. From the estimated polynome parameters, correct all the LA-ICPMS data for the series for each element
+
+:::
