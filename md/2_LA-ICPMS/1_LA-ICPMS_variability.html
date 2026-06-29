@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.9.35">
+<meta name="generator" content="quarto-1.9.38">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -41,10 +41,10 @@ ul.task-list li input[type="checkbox"] {
 <script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-46f66b053e56abd73bb6e954d61a315b.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap-15f6d9b299bec1ad26111eba39ad763c.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-bdc2948a4a9ddc7b13f4c47d06ba2660.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -490,6 +490,25 @@ Figure&nbsp;4.7: Example of Savitzky-Golay filter smoothing (K/C signal in serie
 </figcaption>
 </figure>
 </div>
+</div>
+</div>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Important</span>SoilWood data correction protocol
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ol type="1">
+<li>Selection of a reference series to which all other series will be standardised. I selected a sample series for which the standatdised data had an <em>average</em> behaviour for the oak reference wood core: <em>i.e.</em> average concentration profile compared to the other series. This led to selecting series n°10 (<strong>Renecofor CHS 57B</strong>).</li>
+<li>For each series (other than the reference series), determine the min and maximum measured ICPMS signal for each element (expressed in <em>1/C ICPMS signal</em>)</li>
+<li>Smooth the laser ablation data of the oak reference samples for both the reference series and the standardised series using a Savitzky-Golay filter with parameters set to <code>p = 2</code> (second degree polynome) and <code>n=161</code> (integration over 4 mm - 2mm left and write).</li>
+<li>Fit a polynomial model (one model per element) predicting the smoothed oak reference data in the reference series from the standardised series constraining the model to be monotonous over the range defined by the minimum and maximum values determines in <em>step 2</em></li>
+<li>From the estimated polynome parameters, correct all the LA-ICPMS data for the series for each element</li>
+</ol>
 </div>
 </div>
 
