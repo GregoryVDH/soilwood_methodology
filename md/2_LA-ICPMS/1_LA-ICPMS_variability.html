@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.9.38">
+<meta name="generator" content="quarto-1.9.35">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -41,10 +41,10 @@ ul.task-list li input[type="checkbox"] {
 <script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-46f66b053e56abd73bb6e954d61a315b.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap-bdc2948a4a9ddc7b13f4c47d06ba2660.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-15f6d9b299bec1ad26111eba39ad763c.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -425,7 +425,12 @@ Table&nbsp;4.1: Preferred baseline correction method for each element and order 
 </section>
 <section id="data-correction-methodology" class="level2" data-number="4.2">
 <h2 data-number="4.2" class="anchored" data-anchor-id="data-correction-methodology"><span class="header-section-number">4.2</span> Data correction methodology</h2>
-<p>Biases due to differences in ICPMS detector response to elemental concentrations can be reduced by standardising all sample sample series data to one reference series. This standardisation procedure is carried out by modelling the elemental signal measured for the Oak reference wood core in the reference sample series from the elemental signal measured for the Oak reference wood core in any other of the 11 series. <a href="#fig-inter-series-calibration_K" class="quarto-xref">Figure&nbsp;<span>4.5</span></a> shows the type of relationship between the two datasets. While close to linear a best fit is obtained with a second degree polynomial regression. The following example was obtained by comparing the oak reference in series n°1 (AUD) and n°5 (SAM). The oak reference sample data in this example were smoothed by calculating a mean data point every millimeter (to reduce local variability and highlight main trends).</p>
+<p><strong>nomenclature</strong></p>
+<ul>
+<li>Each series of samples is composed of several wood core samples originating from the CASIMODO or RENECOFOR sites (1 to 10 wood core samples) and an oak reference wood core sample (same sample analyzed in each of the 12 series of samples).</li>
+<li>For standardisation purposes, one of the 12 series of samples will be considered as the reference series. The concentration profiles measured for the oak reference of this reference series will be considered as the reference (hereafter names <strong><em>reference series</em></strong>) in order to standardise all the other measured concentration profiles in the other series (these other series will be hereafter names <strong><em>standardised series</em></strong>).</li>
+</ul>
+<p>Biases due to differences in ICPMS detector response to elemental concentrations can be reduced by standardising all sample sample series data to one reference series. This standardisation procedure is carried out by modelling the elemental signal measured for the Oak reference wood core in the reference sample series as a function of the elemental signal measured for the Oak reference wood core in any other of the 11 series. <a href="#fig-inter-series-calibration_K" class="quarto-xref">Figure&nbsp;<span>4.5</span></a> shows the type of relationship between the two datasets. While close to linear a best fit is obtained with a second degree polynomial regression. The following example was obtained by comparing the oak reference in series n°1 (AUD) and n°5 (SAM). The oak reference sample data in this example were smoothed by calculating a mean data point every millimeter (to reduce local variability and highlight main trends).</p>
 <div class="cell" data-layout-align="center">
 <div id="fig-inter-series-calibration_K" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-layout-align="center">
 <figure class="quarto-float quarto-float-fig figure">
